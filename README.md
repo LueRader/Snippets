@@ -1,0 +1,2 @@
+# Snippets
+Small university homeworks
