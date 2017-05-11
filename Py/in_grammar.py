@@ -12,18 +12,21 @@ class Grammar:
 
 
 def apply_production(input_string, production):
-    if production.left in input_string:
-        return input_string.replace(production.left, production.right)
-    else:
-        return ""
-
+    results = []
+    idx = input_string.find(production.left)
+    while idx >= 0:
+        results.append(input_string[:idx] + production.right + input_string[idx+1:])
+        idx = input_string.find(production.left, idx+1)
+    return results
+    
+    
 def apply_all_productions(input_strings, productions):
     results = []
     for input_str in input_strings:
         for prod in productions:
             res = apply_production(input_str, prod)
-            if res != "":
-                results.append(res)
+            if res != []:
+                results.extend(res)
     return results
 
 def is_producable(grammar, input_string):
@@ -38,4 +41,4 @@ def is_producable(grammar, input_string):
             print("Nay")
             return False
 
-is_producable(Grammar(["S"], ["a", "b"], [Production("S", "aSb"), Production("S", "ab")], "S"), "aaaaaaabbbbbbb")
+is_producable(Grammar(["S"], ["a", "b"], [Production("S", "aSbS"), Production("S", "ab")], "S"), "aabbab")
