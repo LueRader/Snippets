@@ -3,7 +3,7 @@
 #include <memory>
 
 
-class A {
+class A { // dummy class with private members and public print function to test hijacker
 public:
     void print() {
         std::cout << x << ' ' << y << ' ' << s << '\n';
@@ -16,9 +16,9 @@ private:
 
 
 template<class T, class C>
-using Mem = T (C::*);
+using Mem = T (C::*); // maybe change from Mem to something not resembling the word 'Memory'
 
-class any {
+class any { // rename, since std::any exists and it only works for member pointers
     struct base {
         virtual ~base() {}
     };
@@ -43,7 +43,7 @@ public:
     any(Mem<T,C> mem) : holder_{new derived<T, C>{mem}} {}
 
 
-    std::shared_ptr<base> holder_;
+    std::shared_ptr<base> holder_; // Change to std::unique_ptr and implement copy/move constructor
 
 };
 
@@ -63,7 +63,7 @@ template struct Wrapper<Mem<int,A>, Mem<int,A>, Mem<std::string,A>>::Hijack<&A::
 
 int main() {
     A a;
-    auto arr = std::move(hijack());
+    auto arr = std::move(hijack()); // move not necessary, I don't know why I did that
     arr[0].get<int>(a) = 10;
     arr[1].get<int>(a) = 20;
     arr[2].get<std::string>(a) = "Ayyy";
