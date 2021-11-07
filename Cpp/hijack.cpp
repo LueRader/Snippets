@@ -16,7 +16,7 @@ private:
 
 
 template<class T, class C>
-using Mem = T (C::*); // maybe change from Mem to something not resembling the word 'Memory'
+using Member = T (C::*);
 
 class any { // rename, since std::any exists and it only works for member pointers
     struct base {
@@ -25,8 +25,8 @@ class any { // rename, since std::any exists and it only works for member pointe
 
     template<class T, class C>
     struct derived : public base {
-        Mem<T,C> m;
-        derived(Mem<T,C> mem) : m{mem} {}
+        Member<T,C> m;
+        derived(Member<T,C> mem) : m{mem} {}
         T& get(C& c) {
             return c.*m;
         }
@@ -40,7 +40,7 @@ public:
     }
     
     template<class T, class C>
-    any(Mem<T,C> mem) : holder_{new derived<T, C>{mem}} {}
+    any(Member<T,C> mem) : holder_{new derived<T, C>{mem}} {}
 
 
     std::shared_ptr<base> holder_; // Change to std::unique_ptr and implement copy/move constructor
@@ -59,7 +59,7 @@ struct Wrapper {
     };
 };
 
-template struct Wrapper<Mem<int,A>, Mem<int,A>, Mem<std::string,A>>::Hijack<&A::x, &A::y, &A::s>;
+template struct Wrapper<Member<int,A>, Member<int,A>, Member<std::string,A>>::Hijack<&A::x, &A::y, &A::s>;
 
 int main() {
     A a;
